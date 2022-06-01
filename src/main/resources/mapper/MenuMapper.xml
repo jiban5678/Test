@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aaa.sbm.dao.MenuDao">
+    <!--<resultMap id="menuMap" type="com.aaa.sbm.bo.TreeNode">
+        <id column="menu_id" property="id"></id>
+        <result column="menu_name" property="label"></result>
+    </resultMap>
+    <select id="queryAll" resultType="com.aaa.sbm.bo.TreeNode" resultMap="menuMap">
+    -->
+    <!--提取公共语句  减少重复sql量-->
+    <sql id="selectSql">
+           select menu_id as  id, menu_name label,parent_id  parentId,
+          url,perms,icon
+          from sys_menu m
+    </sql>
+
+    <!--查询所有-->
+    <select id="queryAll" resultType="com.aaa.sbm.bo.TreeNode">
+       <include refid="selectSql"></include> where visible=0 and menu_type!='F'
+    </select>
+   <!-- 根据用户编号查询该有用于拥有的所有权限-->
+    <select id="queryByUserId" resultType="com.aaa.sbm.bo.TreeNode">
+        <include refid="selectSql"></include>  where exists (
+            select 1 from sys_role_menu  rm  where  exists (
+                select  role_id from sys_user_role ur where  ur.role_id=rm.role_id and ur.user_id=#{userId}
+            ) and rm.menu_id=m.menu_id
+        ) and m.visible=0 and m.menu_type=='F'
+    </select>
+
+</mapper>

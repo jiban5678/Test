@@ -1,0 +1,53 @@
+-- 根据用户名查询用户对象
+select * from sys_user  where
+status = 0 and del_flag=0 and user_name='admin';
+-- 根据用户编号查询该用户有对应的所有角色
+
+select role_id from sys_user_role where
+user_id=1 ;
+-- 1,in查询
+select * from sys_role where role_id in(
+select role_id from sys_user_role where user_id=1
+) and del_flag=0 and status=0;
+-- 2,exists 比in  效率高
+select * from sys_role r where exists(
+select 1 from sys_user_role  ur where user_id=1
+and r.role_id=ur.role_id
+) and del_flag=0 and status=0;
+-- 3,关联查询  避免子查询 推荐使用
+select r.* from sys_role r join sys_user_role  ur
+on r.role_id=ur.role_id where user_id=1
+and r.del_flag=0 and r.status=0;
+
+-- 根据用户编号查询该用户有对应的所有权限
+--  先查询该用户对应的角色，再查询权限
+select role_id from sys_user_role where
+user_id=1 ;
+select menu_id from sys_role_menu where role_id in(
+   1,5,6
+)
+-- 1，in查询
+select * from sys_menu m where menu_id in(
+	select menu_id from sys_role_menu where role_id in(
+		 select role_id from sys_user_role where
+		 user_id=1
+	)
+) and m.visible=0;
+-- 2, exists 优化写法
+select * from sys_menu m where exists(
+	select menu_id from sys_role_menu rm where exists(
+		 select role_id from sys_user_role ur where
+		 user_id=1 and ur.role_id=rm.role_id
+	) and m.menu_id=rm.menu_id
+) and m.visible=0;
+
+-- 3, 关联查询
+select m.* from
+sys_menu m
+join  sys_role_menu rm on m.menu_id=rm.menu_id
+join sys_user_role ur on ur.role_id=rm.role_id
+and m.visible=0 and ur.user_id=1;
+
+
+
+

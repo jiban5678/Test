@@ -1,0 +1,21 @@
+#数据库连接要素  使用druid连接池
+#spring:
+#  datasource:
+#    #启动类配置
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    #url地址
+#    url: jdbc:mysql://localhost:3306/db_qy148?useUnicode=true&characterEncoding=utf-8
+#    username: root
+#    password: root
+#访问端口号
+server:
+  port: 8888
+#  servlet:
+#    context-path: sbm
+#Mybatis配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.aaa.sbm.entity
+  configuration:
+    #mybatis日志配置 可以打印执行的sql
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

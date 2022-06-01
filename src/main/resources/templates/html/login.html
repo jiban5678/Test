@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script>
+        function  login() {
+           var userName = $("#userName").val();
+           var password = $("#password").val();
+            $.ajax({
+                url:"/user/login?userName="+userName+"&password="+password,
+                type:"GET",
+                dataType:"json",
+                success:function(data){
+                    //打印返回值
+                    alert(JSON.stringify(data));
+                   if(data.code==2000){
+                     location.href="/html/index.html";
+                   }else {
+                       $("#errorInfo").html(data.data);
+                   }
+                },
+                error:function(data){
+                    alert(data);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+     <h3>用户登录</h3>
+        <div style="color: red" id="errorInfo"></div>
+        <input type="text" name="userName" id="userName"><br>
+        <input type="text" name="password"  id="password"><br>
+        <input type="button" onclick="login()" value="登录"><br>
+</body>
+</html>

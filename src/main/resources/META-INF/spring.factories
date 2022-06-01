@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.aaa.sbm.entity.EntityA,\
+com.aaa.sbm.entity.EntityB

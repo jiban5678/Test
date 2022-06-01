@@ -1,0 +1,29 @@
+--  根据用户编号查询该用户拥有的菜单权限
+
+--  1,查询中间表sys_user_role  根据用户编号查询该用户对应所有角色  RBAC0 权限机制
+select  role_id from sys_user_role ur where ur.user_id=1;
+
+--  2,查询中间表sys_role_menu  根据角色编号查询该角色对应所有权限
+select rm.menu_id from sys_role_menu  rm  where rm.role_id in(1,5,6) ;
+
+--  3, 根据上面查询结果查询该用户拥有的菜单权限
+select * from sys_menu m where m.menu_id in(1,
+100,
+101,
+119);
+
+--  最终语句   根据上面分析嵌套
+select * from sys_menu m where m.menu_id in(
+	select rm.menu_id from sys_role_menu  rm  where rm.role_id in(
+		select  role_id from sys_user_role ur where ur.user_id=2
+	)
+)  and m.visible=0 and m.menu_type!='F';
+
+-- 最终语句 优化  建议使用exists  不要使用in
+
+select * from sys_menu m where exists (
+	select 1 from sys_role_menu  rm  where  exists (
+		select  role_id from sys_user_role ur where  ur.role_id=rm.role_id and ur.user_id=2
+	) and rm.menu_id=m.menu_id
+) and m.visible=0 and m.menu_type!='F';
+
